@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +39,10 @@ public class MainActivity extends AppCompatActivity {
         mTeamObjects.add(new TeamObject("Ajax","Amsterdam"));
         mTeamObjects.add(new TeamObject("AZ","Alkmaar"));
         mTeamObjects.add(new TeamObject("PEK","Zwolle"));
+        mTeamObjects.add(new TeamObject("PUK","Zwolle"));
+        mTeamObjects.add(new TeamObject("PSF","Zwolle"));
+        mTeamObjects.add(new TeamObject("Belgie","Zwolle"));
+        mTeamObjects.add(new TeamObject("Weeeeeee","Zwolle"));
 
         recyclerView = findViewById(R.id.team_recyclerview);
 
@@ -46,6 +52,25 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(layoutManager);
 
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                int position = (viewHolder.getAdapterPosition());
+                final TeamObject teamObject = mTeamObjects.get(position);
+                mTeamObjects.remove(position);
+                mAdapter.notifyItemRemoved(position);
+                Toast.makeText(MainActivity.this, "Deleted: " + teamObject.getmTeamName(), Toast.LENGTH_LONG).show();
+            }
+        };
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
     }
 }
